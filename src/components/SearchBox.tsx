@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -13,6 +13,7 @@ interface SearchBoxProps {
 const SearchBox = ({ onSearch, placeholder = "Buscar livros...", className = "" }: SearchBoxProps) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,11 +22,10 @@ const SearchBox = ({ onSearch, placeholder = "Buscar livros...", className = "" 
     }
   };
 
-  // Close search box when clicking outside
+  // Fecha a barra de pesquisa ao clicar fora
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('.search-container')) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -35,7 +35,7 @@ const SearchBox = ({ onSearch, placeholder = "Buscar livros...", className = "" 
   }, []);
 
   return (
-    <div className={`search-container relative ${className}`}>
+    <div ref={searchContainerRef} className={`search-container relative ${className}`}>
       {isOpen ? (
         <form onSubmit={handleSubmit} className="flex items-center">
           <Input 
@@ -56,6 +56,7 @@ const SearchBox = ({ onSearch, placeholder = "Buscar livros...", className = "" 
           variant="ghost" 
           size="icon" 
           className="search-btn"
+          aria-label="Abrir busca"
         >
           <Search className="h-5 w-5" />
         </Button>

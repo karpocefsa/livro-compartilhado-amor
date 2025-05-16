@@ -1,0 +1,186 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilo para a base do site */
+.site-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo para cabeçalho e navegação */
+.header {
+  @apply sticky top-0 bg-white z-50 shadow-sm;
+}
+
+.header-content {
+  @apply py-4 flex items-center justify-between;
+}
+
+.logo h1 {
+  @apply font-bold text-xl md:text-2xl;
+}
+
+.main-nav {
+  @apply md:block;
+}
+
+.main-nav ul {
+  @apply flex flex-col md:flex-row gap-1 md:gap-6 p-4 md:p-0;
+}
+
+.main-nav a {
+  @apply block px-4 py-2 hover:bg-accent rounded-md transition-colors;
+}
+
+.main-nav a.active {
+  @apply font-medium text-primary;
+}
+
+@media (max-width: 768px) {
+  .main-nav {
+    @apply hidden absolute top-full left-0 right-0 bg-white shadow-md;
+  }
+  
+  .main-nav.mobile-menu-open {
+    @apply block;
+  }
+}
+
+/* Estilo para seções */
+.section {
+  @apply py-16;
+}
+
+.section-title {
+  @apply text-2xl md:text-3xl font-bold text-center mb-10;
+}
+
+/* Estilo para seção hero */
+.hero-section {
+  @apply py-12 md:py-24 bg-gradient-to-r from-blue-50 to-indigo-50;
+}
+
+.hero-content {
+  @apply flex flex-col md:flex-row items-center justify-between gap-8;
+}
+
+.hero-text {
+  @apply w-full md:w-1/2 text-center md:text-left;
+}
+
+.hero-text h1 {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-4;
+}
+
+.hero-text p {
+  @apply text-lg md:text-xl text-gray-700 mb-8;
+}
+
+.hero-buttons {
+  @apply flex flex-col sm:flex-row gap-3 justify-center md:justify-start;
+}
+
+.hero-image {
+  @apply w-full md:w-1/2 rounded-xl overflow-hidden shadow-xl;
+}
+
+.hero-image img {
+  @apply w-full h-auto object-cover;
+}
+
+/* Estilo para a seção Sobre */
+.about-content {
+  @apply flex flex-col md:flex-row items-center gap-12;
+}
+
+.about-text {
+  @apply w-full md:w-1/2 space-y-6;
+}
+
+.about-image {
+  @apply w-full md:w-1/2 rounded-xl overflow-hidden shadow-xl;
+}
+
+/* Estilo para cards de livros */
+.books-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+}
+
+.book-card {
+  @apply bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100;
+}
+
+.book-image {
+  @apply relative;
+}
+
+.book-image img {
+  @apply w-full h-60 object-cover;
+}
+
+.book-category {
+  @apply absolute top-3 right-3 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.book-info {
+  @apply p-4 space-y-2;
+}
+
+.book-info h3 {
+  @apply font-bold text-lg leading-tight;
+}
+
+.book-author {
+  @apply text-sm text-gray-600;
+}
+
+.book-status {
+  @apply flex items-center mb-3;
+}
+
+.status-available {
+  @apply inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium;
+}
+
+.status-exchange {
+  @apply inline-block px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full font-medium;
+}
+
+/* Estilo para como funciona */
+.steps-container {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+}
+
+.step {
+  @apply text-center p-6 bg-white rounded-xl shadow-md border border-gray-100;
+}
+
+.step-icon {
+  @apply w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4;
+}
+
+/* Estilos para depoimentos */
+.testimonials-container {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+}
+
+/* Estilos para blog */
+.blog-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+}
+
+/* Estilos para contato */
+.contact-content {
+  @apply flex flex-col md:flex-row gap-12;
+}
+
+.contact-info {
+  @apply w-full md:w-1/2 space-y-4;
+}
+
+.contact-details {
+  @apply space-y-2 mt-4;
+}

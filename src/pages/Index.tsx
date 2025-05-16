@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import BookCard, { Book } from '../components/BookCard';
 import TestimonialCard from '../components/TestimonialCard';
@@ -10,9 +11,35 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // Verifica se o usuário está logado ao carregar a página
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
+  }, []);
+  
   // Função para solicitar um livro
   const handleBookRequest = (book: Book) => {
+    if (!isLoggedIn) {
+      toast.error('Você precisa estar logado para solicitar um livro');
+      navigate('/login');
+      return;
+    }
+    
     toast.success(`Solicitação para "${book.title}" enviada com sucesso!`);
+  };
+  
+  // Redireciona para a página de doação
+  const handleDonate = () => {
+    if (!isLoggedIn) {
+      toast.error('Você precisa estar logado para doar um livro');
+      navigate('/login');
+      return;
+    }
+    
+    navigate('/doar');
   };
 
   return (
@@ -28,8 +55,8 @@ const Index = () => {
               <h1>Bem-vindo ao LivroCompartilhado</h1>
               <p>Compartilhe histórias, espalhe conhecimento</p>
               <div className="hero-buttons">
-                <Button>Doe um livro</Button>
-                <Button variant="outline" className="btn-outline">Encontre um livro</Button>
+                <Button onClick={handleDonate}>Doe um livro</Button>
+                <Button variant="outline" onClick={() => navigate('/catalogo')} className="btn-outline">Encontre um livro</Button>
               </div>
             </div>
             <div className="hero-image">
@@ -47,7 +74,7 @@ const Index = () => {
             <div className="about-text">
               <p>O LivroCompartilhado é uma plataforma sem fins lucrativos que conecta leitores para troca e doação de livros, promovendo a leitura e a sustentabilidade através do reaproveitamento de materiais.</p>
               <p>Nossa missão é fazer com que a literatura chegue a todos, independentemente de condição social ou localização geográfica, criando uma comunidade de leitores engajados e conscientes.</p>
-              <Button>Saiba mais</Button>
+              <Button onClick={() => navigate('/catalogo')}>Saiba mais</Button>
             </div>
             <div className="about-image">
               <img src="/images/readers-sharing.jpg" alt="Leitores compartilhando livros" />
@@ -65,29 +92,35 @@ const Index = () => {
               <BookCard key={index} book={book} onRequest={handleBookRequest} />
             ))}
           </div>
+          <div className="text-center mt-8">
+            <Button onClick={() => navigate('/catalogo')} variant="outline">Ver todos os livros</Button>
+          </div>
         </div>
       </section>
 
       {/* How it Works */}
-      <section className="section how-it-works-section">
+      <section className="section how-it-works-section bg-slate-50">
         <div className="container">
           <h2 className="section-title">Como Funciona</h2>
           <div className="steps-container">
             <div className="step">
               <div className="step-icon">1</div>
-              <h3>Cadastre seu livro</h3>
+              <h3 className="text-xl font-semibold mb-3">Cadastre seu livro</h3>
               <p>Fotografe e cadastre os livros que você deseja doar ou trocar.</p>
             </div>
             <div className="step">
               <div className="step-icon">2</div>
-              <h3>Escolha um livro</h3>
+              <h3 className="text-xl font-semibold mb-3">Escolha um livro</h3>
               <p>Navegue pelo catálogo e encontre o livro que você deseja ler.</p>
             </div>
             <div className="step">
               <div className="step-icon">3</div>
-              <h3>Combine a troca</h3>
+              <h3 className="text-xl font-semibold mb-3">Combine a troca</h3>
               <p>Converse com o outro usuário e combine a entrega do livro.</p>
             </div>
+          </div>
+          <div className="text-center mt-12">
+            <Button onClick={handleDonate}>Quero doar um livro</Button>
           </div>
         </div>
       </section>
@@ -105,7 +138,7 @@ const Index = () => {
       </section>
 
       {/* Blog Section */}
-      <section id="blog" className="section blog-section">
+      <section id="blog" className="section blog-section bg-slate-50">
         <div className="container">
           <h2 className="section-title">Blog e Dicas de Leitura</h2>
           <div className="blog-grid">
@@ -122,7 +155,7 @@ const Index = () => {
           <h2 className="section-title">Entre em Contato</h2>
           <div className="contact-content">
             <div className="contact-info">
-              <h3>Fale Conosco</h3>
+              <h3 className="text-xl font-semibold mb-4">Fale Conosco</h3>
               <p>Tem alguma dúvida ou sugestão? Entre em contato conosco.</p>
               <div className="contact-details">
                 <p><strong>Email:</strong> contato@livrocompartilhado.com</p>
