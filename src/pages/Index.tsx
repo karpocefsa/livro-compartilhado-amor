@@ -142,7 +142,7 @@ const Index = () => {
 };
 
 // Sample data for the books
-const featuredBooks = [
+const featuredBooks: Book[] = [
   {
     title: "O Pequeno Príncipe",
     author: "Antoine de Saint-Exupéry",
