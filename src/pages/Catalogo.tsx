@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 // Combina os livros cadastrados pelo usuário com os exemplos predefinidos
 const Catalogo = () => {
@@ -15,6 +16,9 @@ const Catalogo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Função para solicitar um livro
   const handleBookRequest = (book: Book) => {
@@ -22,6 +26,7 @@ const Catalogo = () => {
     const user = localStorage.getItem("user");
     if (!user) {
       toast.error("Você precisa estar logado para solicitar um livro");
+      navigate("/login");
       return;
     }
 
@@ -29,64 +34,80 @@ const Catalogo = () => {
   };
 
   useEffect(() => {
-    // Recupera os livros dos exemplos predefinidos (isso viria do backend em um app real)
-    const predefinedBooks: Book[] = [
-      {
-        title: "O Pequeno Príncipe",
-        author: "Antoine de Saint-Exupéry",
-        cover: "/images/pequeno-principe.jpg",
-        category: "Ficção",
-        status: "Disponível"
-      },
-      {
-        title: "O Alquimista",
-        author: "Paulo Coelho",
-        cover: "/images/alquimista.jpg",
-        category: "Ficção",
-        status: "Troca"
-      },
-      {
-        title: "Harry Potter e a Pedra Filosofal",
-        author: "J.K. Rowling",
-        cover: "/images/harry-potter.jpg",
-        category: "Fantasia",
-        status: "Disponível"
-      },
-      {
-        title: "A Cabana",
-        author: "William P. Young",
-        cover: "/images/a-cabana.jpg",
-        category: "Drama",
-        status: "Troca"
-      },
-      {
-        title: "O Senhor dos Anéis",
-        author: "J.R.R. Tolkien",
-        cover: "/images/senhor-dos-aneis.jpg",
-        category: "Fantasia",
-        status: "Disponível"
-      },
-      {
-        title: "Dom Quixote",
-        author: "Miguel de Cervantes",
-        cover: "/images/dom-quixote.jpg",
-        category: "Clássico",
-        status: "Troca"
-      }
-    ];
+    const loadBooks = async () => {
+      setLoading(true);
 
-    // Recupera os livros doados (se houver)
-    const donatedBooksJSON = localStorage.getItem("donatedBooks");
-    const donatedBooks = donatedBooksJSON ? JSON.parse(donatedBooksJSON) : [];
-    
-    // Combina todos os livros
-    const allBooks = [...predefinedBooks, ...donatedBooks];
-    setBooks(allBooks);
-    setFilteredBooks(allBooks);
-  }, []);
+      // Recupera os livros dos exemplos predefinidos (isso viria do backend em um app real)
+      const predefinedBooks: Book[] = [
+        {
+          title: "O Pequeno Príncipe",
+          author: "Antoine de Saint-Exupéry",
+          cover: "/images/pequeno-principe.jpg",
+          category: "Ficção",
+          status: "Disponível"
+        },
+        {
+          title: "O Alquimista",
+          author: "Paulo Coelho",
+          cover: "/images/alquimista.jpg",
+          category: "Ficção",
+          status: "Troca"
+        },
+        {
+          title: "Harry Potter e a Pedra Filosofal",
+          author: "J.K. Rowling",
+          cover: "/images/harry-potter.jpg",
+          category: "Fantasia",
+          status: "Disponível"
+        },
+        {
+          title: "A Cabana",
+          author: "William P. Young",
+          cover: "/images/a-cabana.jpg",
+          category: "Drama",
+          status: "Troca"
+        },
+        {
+          title: "O Senhor dos Anéis",
+          author: "J.R.R. Tolkien",
+          cover: "/images/senhor-dos-aneis.jpg",
+          category: "Fantasia",
+          status: "Disponível"
+        },
+        {
+          title: "Dom Quixote",
+          author: "Miguel de Cervantes",
+          cover: "/images/dom-quixote.jpg",
+          category: "Clássico",
+          status: "Troca"
+        }
+      ];
+
+      // Recupera os livros doados (se houver)
+      const donatedBooksJSON = localStorage.getItem("donatedBooks");
+      const donatedBooks = donatedBooksJSON ? JSON.parse(donatedBooksJSON) : [];
+      
+      // Combina todos os livros
+      const allBooks = [...predefinedBooks, ...donatedBooks];
+      setBooks(allBooks);
+      setFilteredBooks(allBooks);
+      
+      // Verifica se há um termo de busca na URL
+      const searchFromUrl = searchParams.get('search');
+      if (searchFromUrl) {
+        setSearchTerm(searchFromUrl);
+      }
+      
+      setLoading(false);
+    };
+
+    loadBooks();
+  }, [searchParams]);
 
   // Filtra os livros com base nos critérios de pesquisa
-  const filterBooks = () => {
+  useEffect(() => {
+    if (books.length === 0) return;
+    
     let filtered = [...books];
     
     // Filtra por termo de pesquisa
@@ -109,15 +130,17 @@ const Catalogo = () => {
     }
     
     setFilteredBooks(filtered);
-  };
-
-  // Atualiza os filtros quando os critérios mudam
-  useEffect(() => {
-    filterBooks();
   }, [searchTerm, categoryFilter, statusFilter, books]);
 
   // Extrai categorias únicas para o filtro
   const uniqueCategories = Array.from(new Set(books.map(book => book.category)));
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setCategoryFilter("");
+    setStatusFilter("");
+    navigate('/catalogo');
+  };
 
   return (
     <div className="site-container flex flex-col min-h-screen">
@@ -164,7 +187,11 @@ const Catalogo = () => {
           </div>
           
           {/* Lista de livros */}
-          {filteredBooks.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : filteredBooks.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredBooks.map((book, index) => (
                 <BookCard key={index} book={book} onRequest={handleBookRequest} />
@@ -176,11 +203,7 @@ const Catalogo = () => {
               <Button 
                 variant="outline" 
                 className="mt-4"
-                onClick={() => {
-                  setSearchTerm("");
-                  setCategoryFilter("");
-                  setStatusFilter("");
-                }}
+                onClick={handleClearFilters}
               >
                 Limpar filtros
               </Button>

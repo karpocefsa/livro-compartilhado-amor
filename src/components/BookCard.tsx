@@ -1,5 +1,6 @@
 
 import { Button } from '@/components/ui/button';
+import getImageUrl from '../utils/imageService';
 
 export interface Book {
   id?: number;
@@ -24,20 +25,26 @@ const BookCard = ({ book, onRequest }: BookCardProps) => {
   };
 
   return (
-    <div className="book-card card">
-      <div className="book-image">
-        <img src={book.cover} alt={book.title} />
-        <span className="book-category">{book.category}</span>
+    <div className="book-card border rounded-lg overflow-hidden shadow-md transition-shadow hover:shadow-lg">
+      <div className="book-image relative h-60 overflow-hidden">
+        <img 
+          src={getImageUrl(book.cover)} 
+          alt={book.title} 
+          className="w-full h-full object-cover"
+        />
+        <span className="book-category absolute top-2 right-2 bg-primary/80 text-white px-2 py-1 rounded-md text-xs">
+          {book.category}
+        </span>
       </div>
-      <div className="book-info">
-        <h3>{book.title}</h3>
-        <p className="book-author">{book.author}</p>
-        <div className="book-status">
-          <span className={book.status === 'Disponível' ? 'status-available' : 'status-exchange'}>
+      <div className="book-info p-4">
+        <h3 className="font-semibold text-lg mb-1 line-clamp-1">{book.title}</h3>
+        <p className="book-author text-sm text-gray-600 mb-2">{book.author}</p>
+        <div className="book-status mb-3">
+          <span className={`px-2 py-1 text-xs rounded-full ${book.status === 'Disponível' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
             {book.status}
           </span>
         </div>
-        <Button onClick={handleRequest} className="btn-sm">Solicitar</Button>
+        <Button onClick={handleRequest} className="w-full" size="sm">Solicitar</Button>
       </div>
     </div>
   );

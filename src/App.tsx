@@ -9,18 +9,19 @@ import Login from "./pages/Login";
 import DoarLivro from "./pages/DoarLivro";
 import Catalogo from "./pages/Catalogo";
 import Perfil from "./pages/Perfil";
+import { useState } from "react";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // 1 minute
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
-// Create a React component function for App
 function App() {
+  // Crie o queryClient dentro do componente para resolver problemas com hooks
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
